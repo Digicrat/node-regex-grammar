@@ -1,0 +1,16 @@
+{
+  "name": "regex_grammar",
+  "version": "1.0.0",
+  "description": "Grammar utility, loosely inspired by Raku's Grammars, to allow construction of more readable and complex regular expressions.",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha"
+  },
+    "repository" : "github:Digicrat/node-regex-grammar",
+  "author": "David <david@empireofgames.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "chai": "^4.3.3",
+    "mocha": "^8.3.0"
+  }
+}
