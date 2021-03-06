@@ -2,7 +2,7 @@
   "name": "regex_grammar",
   "version": "1.0.0",
   "description": "Grammar utility, loosely inspired by Raku's Grammars, to allow construction of more readable and complex regular expressions.",
-  "main": "index.js",
+  "main": "index.mjs",
   "scripts": {
     "test": "mocha"
   },

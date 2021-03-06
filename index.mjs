@@ -1,7 +1,7 @@
 // Exceeding this is a likely indicator of infinite recursion, or a significantly over-complicated Grammar
 const MAX_LEVEL=1024; 
 
-export class Grammar {
+export default class Grammar {
     _def; // Original Grammar Input (for reference/debugging)
     _re = {}; // Built Regexes (TOP and components)
 

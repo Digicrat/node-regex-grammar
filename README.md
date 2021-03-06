@@ -1,6 +1,7 @@
-A library to aide in construction of complex regular expressions that are easier to maintain and read.  Install with "npm install regex-grammar".
+A library to aide in construction of complex regular expressions that are easier to maintain and read.  Install with "npm install regex_grammar".
 
 ```
+import Grammar from 'regex_grammar';
 // Note: This is for demonstration purposes only. URLSearchParams is a better approach for this particular example of parsing urls.
 const URL_GRAMMAR = {
     TOP: "$proto? $domain $path? $params? $bookmark?", // In string form, all whitespace is ignored. Specifically " " is treated as "\s*"
