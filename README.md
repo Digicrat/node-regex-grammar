@@ -5,10 +5,11 @@ import Grammar from 'regex_grammar';
 // Note: This is for demonstration purposes only. URLSearchParams is a better approach for this particular example of parsing urls.
 const URL_GRAMMAR = {
     TOP: "$proto? $domain $path? $params? $bookmark?", // In string form, all whitespace is ignored. Specifically " " is treated as "\s*"
-    proto: "(\\w+)://",
+    proto: "$prototype://",
+    prototype: ["ssh","https?","git","ftp"], // Will match any of these values
     domain: /[\w\.]+/,
     path: new RegExp("[\\w\\-/]+"), // Recall: String form requires escaping of '/'
-    params: /\?((?<key>\w+)=(?<val>\w+)&?)+/,
+    params: /\?((?:\w+)=(?:\w+)&?)+/,
     bookmark: /#.+/
 };
 const urlGrammar = new Grammar(URL_GRAMMAR);
@@ -23,11 +24,19 @@ See index.mjs for additional documentation (TODO: Export to HTML), and test.mjs 
 ## Key Features
 
 - 'TOP' always defines the top level of a Grammar, which is the default entry point for nominal matching.
-- A grammar key can be referenced from any other key using the syntax '$key', however cyclic references are not supported.  ie: Rule 'foo' can't refer to rule 'bar' if it refers back to foo.
+- A grammar key can be referenced from any other key using the syntax '$key'
+  - Cyclic references are not supported.  ie: Rule 'foo' can't refer to rule 'bar' if it refers back to foo.
+  - If a rule does not exist, no substitution will be performed and a warning will be printed. Note: User may need to explicitly escape the '$' in this case for a literal match, for example '\\$foo' or /\$foo/ to match 'foo', otherwise regex may interpret the '$' as matching the beginning of string in some cases. 
 - The 'match' function will return results equivalent to String.match.  This result set may be extended in future versions with additional functionality.
-- At present all grammar rules must be defined as either a RegExp or a string.  This is roughly equivalent to Perl6/Raku's rules vs tokens.
+- At present all grammar rules must be defined as one of the following.
   - A regular expression can be defined in the normal ways as "/foo/" or "new RegExp(...)"
   - A string will be treated as a pattern used to create a new RegExp, but where whitespace is insignificant. Specifically, any whitespace in the input string will become "\s*" in the built regular expression.  
+  - An array will be treated as a set of rules to match against.
+    - Contents of the array may be RegExp objects, or strings.
+    - Note: Whitespace substitution does not apply to strings in this case.
+    - Variable substitution for referenced rules will apply.
+    - Each element will be wrapped in a non-capturing group to ensure reliability.
+    - A rule such as "['alpha','beta']" is equivalent to writing "(?:alpha)|(?:beta)".  
 - Named capture groups will be automatically created for each rule/token.  
   - Group names will be prefixed with the name of the parent group as applicable, and suffixed with an integer if not unique (ie: for repeated patterns)
 

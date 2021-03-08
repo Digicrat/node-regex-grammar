@@ -6,17 +6,20 @@ describe('Grammar fails gracefully on bad input', () => {
     it('Fails if TOP is not given', () => {
         expect( () =>  new Grammar({'foo': /foo/})).to.throw();
     });
+    /* This test is deprecated. It will now warn for unmatched rules, but not fail.
+     * TODO: Can we test against warnings? Should this behavior be reverted?
     it('Fails if Grammar references non-existent rule', () => {
         expect( () =>  new Grammar({'TOP': "$foo $bar"})).to.throw();
     });
-    // TODO: Ability to escape $
+    */
 });
 
 describe('Baby English Base Test', () => {
     const BABY_ENGLISH = {
         
         WORD: /\w+/,
-        ADJECTIVE: /good|bad/,
+        //ADJECTIVE: /good|bad/,
+        ADJECTIVE: ['good','bad','\\$foo'], // Match any of these, or the literal string '$foo' (which doesn't match any pattern keys)
         TOP: /($ADJECTIVE)\s+($WORD)/
         
     };
@@ -32,7 +35,13 @@ describe('Baby English Base Test', () => {
         var result = babySentenceGrammar.match('evil cat');
         assert.notExists(result);
     });
-
+    it('Match escaped $foo bar', () => {
+        var result = babySentenceGrammar.match('$foo bar');
+        console.log(babySentenceGrammar.describe());
+        assert.exists(result);
+        assert.equal(result.groups.TOP_ADJECTIVE, '$foo');
+        assert.equal(result.groups.TOP_WORD, 'bar');
+    });
 });
 
 describe('A URL Parsing Example', () => {

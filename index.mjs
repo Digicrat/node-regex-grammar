@@ -40,6 +40,20 @@ export default class Grammar {
         var src;
         if (typeof rule == "string") {
             src = rule.replace(/\s+/g,"\\s*");
+        } else if (Array.isArray(rule)) {
+            // A list of rules or values to be or'd together.
+            src = rule.reduce((accum, val, idx, arr) => {
+                if (val instanceof RegExp) {
+                    val = val.source;
+                }
+                val = "(?:" + val + ")"; // Force grouping regardless of val content
+                if (accum) {
+                    return accum + "|" + val;
+                } else {
+                    return val;
+                }
+            });
+            
         } else if (rule instanceof RegExp) {
             src = rule.source;
         } else {
@@ -47,7 +61,13 @@ export default class Grammar {
         }
         var cache = {};
         const pattern = src
+        // Match pattern rules, ie: $foo, providing that a corresponding rule was defined
               .replace(/\$(\w+)/g, (match, name) => {
+                  if (!this._def[name]) {
+                      // TODO: Verbosity to disable this warning, which is aimed at alerting user against typos while permitting actual matches
+                      console.warn("Ignoring undefined key " + name);
+                      return match;
+                  }
                   if (!this._re[name]) {
                       // Parse new child element
                       this._build(name, level+1);

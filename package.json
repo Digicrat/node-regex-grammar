@@ -1,6 +1,6 @@
 {
   "name": "regex_grammar",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "description": "Grammar utility, loosely inspired by Raku's Grammars, to allow construction of more readable and complex regular expressions.",
   "main": "index.mjs",
   "scripts": {
